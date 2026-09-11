@@ -1,7 +1,5 @@
 # Capstone Brief and Setup
 
-**Session Time:** Remainder of Day 4 instructional time
-
 ## Purpose
 
 Closing segment of Day 4 — transitioning from the week's final lesson (Deployment Patterns on AWS) into the capstone itself. By this point, every learner has built and validated a SQL agent (Day 2), built and validated a retrieval agent (Day 3), standardized both to a shared tool registry and combined them into an orchestrator (this morning), and deployed that orchestrator to Lambda (this afternoon). The capstone is not new work — it's finishing, polishing, and demoing what's already built.
