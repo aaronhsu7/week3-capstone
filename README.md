@@ -236,23 +236,6 @@ Complete Bronze, Stretch Goal A, **and** Stretch Goal B, then confirm they work 
 
 **Gold is complete when Bronze, both stretch goals, and the combined test all pass.**
 
-## Demo
-
-Run live against your deployed Lambda function:
-
-1. One question answered by the SQL agent
-2. One question answered by the retrieval agent
-3. One question needing both, with the synthesized, cited answer
-4. One unsafe request, showing it blocked before execution
-
-Then explain, in your own words:
-
-- **Routing:** why the orchestrator sent a question where it did, and what you'd change if it got one wrong
-- **Validation:** what your validator blocks, and what it cannot catch
-- **Cost:** what a query costs, which component costs most, and why
-
-If you completed a stretch goal, demonstrate it as well.
-
 ## Reflection
 
 Write a short paragraph:
