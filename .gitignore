@@ -1,0 +1,10 @@
+.env
+venv/
+__pycache__/
+*.pyc
+# ~90MB model weights -- download per README Setup instead of committing
+model.onnx
+tokenizer.json
+chroma_verification/
+build/
+*.zip

@@ -1,0 +1,10 @@
+# Runtime (also bundled into the Lambda zip)
+boto3
+langgraph
+psycopg2-binary
+opensearch-py
+requests-aws4auth
+python-dotenv
+onnxruntime
+tokenizers
+numpy

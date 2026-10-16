@@ -1,0 +1,18 @@
+INIT_START Runtime Version: python:3.12.mainlinev2.v43
+Runtime Version ARN: arn:aws:lambda:us-east-1::runtime:36aeb19f3326e129d9f096dea0a3c6a9ca8dce2610e62d2b2060747602d863ae
+START RequestId: a297d5b7-a574-4eb4-8cfc-1857243f4583 Version: $LATEST
+[LOG] query_start: {"trace_id": "16e817e4"}
+[TOKENS] trace=16e817e4 classification      in=  583 out=   9 cost=$0.001884
+[0;93m2026-10-16 20:04:22.254992477 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+[TOKENS] trace=16e817e4 sql_generation      in=  463 out=  76 cost=$0.002529
+[TOKENS] trace=16e817e4 sql_interpretation  in=  302 out=  76 cost=$0.002046
+[TOKENS] trace=16e817e4 retrieval_answer    in= 1629 out= 343 cost=$0.010032
+[TOKENS] trace=16e817e4 synthesis           in=  732 out= 338 cost=$0.007266
+[LOG] query_complete: {"trace_id": "16e817e4", "route": "both", "sql_validation": "PASSED", "retrieval_chunk_count": 5, "cost": {"by_component": {"classification": {"calls": 1, "input_tokens": 583, "output_tokens": 9, "cost_usd": 0.001884}, "sql_generation": {"calls": 1, "input_tokens": 463, "output_tokens": 76, "cost_usd": 0.002529}, "sql_interpretation": {"calls": 1, "input_tokens": 302, "output_tokens": 76, "cost_usd": 0.002046}, "retrieval_answer": {"calls": 1, "input_tokens": 1629, "output_tokens": 343, "cost_usd": 0.010032}, "synthesis": {"calls": 1, "input_tokens": 732, "output_tokens": 338, "cost_usd": 0.007266}}, "total": {"calls": 5, "input_tokens": 3709, "output_tokens": 842, "cost_usd": 0.023757}}}
+END RequestId: a297d5b7-a574-4eb4-8cfc-1857243f4583
+REPORT RequestId: a297d5b7-a574-4eb4-8cfc-1857243f4583
+Duration: 11706.56 ms
+Billed Duration: 14538 ms
+Memory Size: 1024 MB
+Max Memory Used: 455 MB
+Init Duration: 2831.41 ms

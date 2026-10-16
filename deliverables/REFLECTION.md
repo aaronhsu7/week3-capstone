@@ -1,0 +1,8 @@
+# Reflection
+
+Question 5 tested the limits the most: *"What pitfalls does our cloud migration playbook warn about, and which of our active projects is a cloud migration?"* On the first run, both "both" questions (5 and 6) failed. The router classified them correctly as `both` and sent them to both agents, but the SQL agent received the whole question, saw a playbook half it couldn't answer from the schema, and returned `CANNOT_ANSWER` for all of it. The validator then reported that as `BLOCKED`. This made it seem like the issue was from validation, but it wasn't one. It also wasn't a routing problem. Synthesis didn't make it worse: it reported the gap honestly and didn't invent a project.
+
+The real failure was in the handoff between the router and the agents. The router decided which agents a question needed, but it never split the question into parts. Each agent was handed a two-part question, half of which belonged to the other agent. I had already seen the same pattern in Step 4. There, the retrieval agent answered its half correctly but mentioned the half it couldn't answer, so it was flagged as `success: false`. I fixed both cases by telling each agent to ignore the parts meant for another agent. A more effective fix would be to have the router break the question into a sub-question for each agent.
+
+I think this tells us that multi-agent systems are still fragile in the sense thta each agent sees the whole question while being responsible for only part of it. In comparison, a single well-scope agent would never see a question outside its scope. It might also be harder to debug a mis-route within a multi-agent system due to misleading labels, like this `BLOCKED` that ended up not being a validation problem.
+
