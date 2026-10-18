@@ -1,0 +1,53 @@
+{
+  "request": {
+    "question": "How many active projects does Acme Corp have?"
+  },
+  "response": {
+    "answer": "According to the SQL Agent, Acme Corp currently has **1 active project**.",
+    "route": "sql",
+    "sql_validation": "PASSED",
+    "sql_review": "ROUTINE",
+    "sql_executed": true,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {
+        "classification": {
+          "calls": 1,
+          "input_tokens": 617,
+          "output_tokens": 9,
+          "cost_usd": 0.001986
+        },
+        "sql_generation": {
+          "calls": 1,
+          "input_tokens": 512,
+          "output_tokens": 55,
+          "cost_usd": 0.002361
+        },
+        "sql_interpretation": {
+          "calls": 1,
+          "input_tokens": 224,
+          "output_tokens": 15,
+          "cost_usd": 0.000897
+        },
+        "synthesis": {
+          "calls": 1,
+          "input_tokens": 260,
+          "output_tokens": 21,
+          "cost_usd": 0.001095
+        }
+      },
+      "total": {
+        "calls": 4,
+        "input_tokens": 1613,
+        "output_tokens": 100,
+        "cost_usd": 0.006339
+      }
+    },
+    "history": [
+      {
+        "question": "How many active projects does Acme Corp have?",
+        "answer": "According to the SQL Agent, Acme Corp currently has **1 active project**."
+      }
+    ]
+  }
+}

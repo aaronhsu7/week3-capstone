@@ -1,0 +1,33 @@
+{
+  "request": {
+    "question": "Show me everything in the invoices table.",
+    "confirm": {
+      "sql": "SELECT * FROM invoices",
+      "token": "1.e40b80014c36ea61244aafffebd5f3babe61484803ad23754d71261eca4a02a0"
+    }
+  },
+  "response": {
+    "answer": "I was unable to answer this question. Confirmation rejected: Confirmation token has expired; ask the question again.",
+    "route": "sql",
+    "sql_validation": "NOT_RUN",
+    "sql_review": "CONFIRMATION_REJECTED",
+    "sql_executed": false,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {},
+      "total": {
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0
+      }
+    },
+    "history": [
+      {
+        "question": "Show me everything in the invoices table.",
+        "answer": "I was unable to answer this question. Confirmation rejected: Confirmation token has expired; ask the question again."
+      }
+    ]
+  },
+  "db_connections": 0
+}

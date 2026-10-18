@@ -1,0 +1,43 @@
+{
+  "request": {
+    "question": "Show me everything in the invoices table."
+  },
+  "response": {
+    "answer": "This query passed validation but needs your confirmation before it runs: SELECT * with no WHERE clause returns every column of every row. No WHERE, LIMIT, or aggregation: the query returns every row it reads.\n\nSQL awaiting confirmation:\nSELECT * FROM invoices",
+    "route": "sql",
+    "sql_validation": "PASSED",
+    "sql_review": "NEEDS_CONFIRMATION",
+    "sql_executed": false,
+    "needs_confirmation": true,
+    "token_usage": {
+      "by_component": {
+        "classification": {
+          "calls": 1,
+          "input_tokens": 615,
+          "output_tokens": 9,
+          "cost_usd": 0.00198
+        },
+        "sql_generation": {
+          "calls": 1,
+          "input_tokens": 510,
+          "output_tokens": 8,
+          "cost_usd": 0.00165
+        }
+      },
+      "total": {
+        "calls": 2,
+        "input_tokens": 1125,
+        "output_tokens": 17,
+        "cost_usd": 0.00363
+      }
+    },
+    "pending_sql": "SELECT * FROM invoices",
+    "confirmation_reasons": [
+      "SELECT * with no WHERE clause returns every column of every row.",
+      "No WHERE, LIMIT, or aggregation: the query returns every row it reads."
+    ],
+    "confirmation_token": "1792366491.d398b6a30658091cb219e3bc777eb574f5866c51562eda361b2c7566c7574af1",
+    "history": []
+  },
+  "db_connections": 0
+}

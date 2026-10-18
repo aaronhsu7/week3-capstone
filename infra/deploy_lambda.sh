@@ -37,9 +37,10 @@ find . -name "*.so*" -type f -exec strip --strip-unneeded {} + 2>/dev/null || tr
 cd "$ROOT"
 
 echo "== 3. Add application code and model (never .env)"
-cp bedrock_client.py onnx_embed.py orchestrator.py tokenomics_logger.py lambda_handler.py \
+cp bedrock_client.py onnx_embed.py orchestrator.py tokenomics_logger.py lambda_handler.py memory.py \
    tool_registry.py model.onnx tokenizer.json "$PKG/"
-mkdir -p "$PKG/agents" && cp agents/__init__.py agents/sql_agent.py agents/retrieval_agent.py "$PKG/agents/"
+mkdir -p "$PKG/agents" && cp agents/__init__.py agents/sql_agent.py agents/sql_review.py \
+   agents/retrieval_agent.py "$PKG/agents/"
 SIZE=$(du -sb "$PKG" | cut -f1)
 echo "   unzipped: $((SIZE / 1048576))MiB of 250MiB"
 [[ $SIZE -lt 262144000 ]] || { echo "Package over 250MiB -- aborting"; exit 1; }
@@ -55,23 +56,29 @@ aws s3api head-bucket --bucket "$BUCKET" 2>/dev/null || aws s3 mb "s3://${BUCKET
 aws s3 cp "$ZIP" "s3://${BUCKET}/orchestrator_function.zip" --only-show-errors
 
 echo "== 6. Deploy ${FUNCTION}"
-if aws lambda get-function --function-name "$FUNCTION" >/dev/null 2>&1; then
-  aws lambda update-function-code --function-name "$FUNCTION" \
-    --s3-bucket "$BUCKET" --s3-key orchestrator_function.zip --query "LastUpdateStatus" --output text
-else
-  ENV_FILE=$(mktemp)
-  venv/bin/python -c "
+# Environment variables come from .env; written to a temp file and every
+# command's output is --query-limited, so secrets never reach the terminal.
+ENV_FILE=$(mktemp)
+venv/bin/python -c "
 import json, sys
 from dotenv import dotenv_values
 v = dotenv_values('.env')
-keys = ['RDS_HOST','RDS_PORT','RDS_DATABASE','RDS_USER','RDS_PASSWORD','OPENSEARCH_ENDPOINT','OPENSEARCH_INDEX']
+keys = ['RDS_HOST','RDS_PORT','RDS_DATABASE','RDS_USER','RDS_PASSWORD','OPENSEARCH_ENDPOINT',
+        'OPENSEARCH_INDEX','CONFIRMATION_SECRET']
 json.dump({'Variables': {k: v[k] for k in keys}}, open(sys.argv[1], 'w'))" "$ENV_FILE"
+if aws lambda get-function --function-name "$FUNCTION" >/dev/null 2>&1; then
+  aws lambda update-function-code --function-name "$FUNCTION" \
+    --s3-bucket "$BUCKET" --s3-key orchestrator_function.zip --query "LastUpdateStatus" --output text
+  aws lambda wait function-updated-v2 --function-name "$FUNCTION"
+  aws lambda update-function-configuration --function-name "$FUNCTION" \
+    --environment "file://${ENV_FILE}" --query "LastUpdateStatus" --output text
+else
   aws lambda create-function --function-name "$FUNCTION" --runtime python3.12 --architectures x86_64 \
     --handler lambda_handler.handler --code "S3Bucket=${BUCKET},S3Key=orchestrator_function.zip" \
     --role "arn:aws:iam::${ACCOUNT_ID}:role/${ROLE}" --timeout 120 --memory-size 1024 \
-    --environment "file://${ENV_FILE}" --query "State" --output text  # --query keeps env vars out of output
-  rm -f "$ENV_FILE"
+    --environment "file://${ENV_FILE}" --query "State" --output text
 fi
+rm -f "$ENV_FILE"
 aws lambda wait function-updated-v2 --function-name "$FUNCTION"
 echo "Deployed. Invoke with:"
 echo "  aws lambda invoke --function-name $FUNCTION --payload file://deliverables/deployment/test_both.json \\"

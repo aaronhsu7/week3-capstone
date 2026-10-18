@@ -100,15 +100,19 @@ def summarise_calls(calls: list[dict]) -> dict:
     }
 
 
-def run_traced_query(orchestrator, question: str) -> dict:
+def run_traced_query(orchestrator, question: str, confirmation: dict | None = None,
+                     history: list | None = None) -> dict:
     trace = {"trace_id": str(uuid.uuid4())[:8], "calls": []}
     token = _trace.set(trace)
     try:
-        log_decision("query_start", question, {"trace_id": trace["trace_id"]})
+        log_decision("query_start", question, {"trace_id": trace["trace_id"],
+                                               "is_confirmation": bool(confirmation),
+                                               "history_turns": len(history or [])})
 
         result = orchestrator.invoke({
             "question": question, "route": None, "sql_result": None,
-            "retrieval_result": None, "final_answer": None, "token_usage": None
+            "retrieval_result": None, "final_answer": None, "token_usage": None,
+            "confirmation": confirmation, "history": history,
         })
 
         # Built from the calls actually logged, not from what nodes chose to
@@ -121,6 +125,8 @@ def run_traced_query(orchestrator, question: str) -> dict:
             "trace_id": trace["trace_id"],
             "route": result["route"],
             "sql_validation": result["sql_result"].get("metadata", {}).get("validation") if result.get("sql_result") else None,
+            "sql_review": result["sql_result"].get("metadata", {}).get("review") if result.get("sql_result") else None,
+            "sql_executed": result["sql_result"].get("metadata", {}).get("executed") if result.get("sql_result") else None,
             "retrieval_chunk_count": result["retrieval_result"].get("metadata", {}).get("chunk_count") if result.get("retrieval_result") else None,
             "cost": cost,
         })

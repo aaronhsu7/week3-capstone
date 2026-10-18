@@ -1,0 +1,33 @@
+{
+  "request": {
+    "question": "Show me everything in the invoices table.",
+    "confirm": {
+      "sql": "SELECT * FROM clients",
+      "token": "1792366491.d398b6a30658091cb219e3bc777eb574f5866c51562eda361b2c7566c7574af1"
+    }
+  },
+  "response": {
+    "answer": "I was unable to answer this question. Confirmation rejected: Confirmation does not match the flagged query; the SQL or question was changed.",
+    "route": "sql",
+    "sql_validation": "NOT_RUN",
+    "sql_review": "CONFIRMATION_REJECTED",
+    "sql_executed": false,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {},
+      "total": {
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0
+      }
+    },
+    "history": [
+      {
+        "question": "Show me everything in the invoices table.",
+        "answer": "I was unable to answer this question. Confirmation rejected: Confirmation does not match the flagged query; the SQL or question was changed."
+      }
+    ]
+  },
+  "db_connections": 0
+}

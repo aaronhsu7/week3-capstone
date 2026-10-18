@@ -1,0 +1,54 @@
+{
+  "request": {
+    "question": "How many active projects do we have?"
+  },
+  "response": {
+    "answer": "Based on the SQL Agent's query of the projects database, there are currently **3** active projects. (SQL Agent)",
+    "route": "sql",
+    "sql_validation": "PASSED",
+    "sql_review": "ROUTINE",
+    "sql_executed": true,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {
+        "classification": {
+          "calls": 1,
+          "input_tokens": 614,
+          "output_tokens": 9,
+          "cost_usd": 0.001977
+        },
+        "sql_generation": {
+          "calls": 1,
+          "input_tokens": 509,
+          "output_tokens": 16,
+          "cost_usd": 0.001767
+        },
+        "sql_interpretation": {
+          "calls": 1,
+          "input_tokens": 178,
+          "output_tokens": 11,
+          "cost_usd": 0.000699
+        },
+        "synthesis": {
+          "calls": 1,
+          "input_tokens": 204,
+          "output_tokens": 28,
+          "cost_usd": 0.001032
+        }
+      },
+      "total": {
+        "calls": 4,
+        "input_tokens": 1505,
+        "output_tokens": 64,
+        "cost_usd": 0.005475
+      }
+    },
+    "history": [
+      {
+        "question": "How many active projects do we have?",
+        "answer": "Based on the SQL Agent's query of the projects database, there are currently **3** active projects. (SQL Agent)"
+      }
+    ]
+  },
+  "db_connections": 1
+}

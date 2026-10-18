@@ -1,0 +1,63 @@
+{
+  "request": {
+    "question": "What about their total contract value?",
+    "history": [
+      {
+        "question": "How many active projects does Acme Corp have?",
+        "answer": "Based on the database query, Acme Corp currently has **1 active project**. (SQL Agent)"
+      }
+    ]
+  },
+  "response": {
+    "answer": "Based on the SQL Agent's results, Acme Corp's total contract value is **$250,000.00**.",
+    "route": "sql",
+    "sql_validation": "PASSED",
+    "sql_review": "ROUTINE",
+    "sql_executed": true,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {
+        "classification": {
+          "calls": 1,
+          "input_tokens": 665,
+          "output_tokens": 9,
+          "cost_usd": 0.00213
+        },
+        "sql_generation": {
+          "calls": 1,
+          "input_tokens": 560,
+          "output_tokens": 26,
+          "cost_usd": 0.00207
+        },
+        "sql_interpretation": {
+          "calls": 1,
+          "input_tokens": 193,
+          "output_tokens": 21,
+          "cost_usd": 0.000894
+        },
+        "synthesis": {
+          "calls": 1,
+          "input_tokens": 230,
+          "output_tokens": 28,
+          "cost_usd": 0.00111
+        }
+      },
+      "total": {
+        "calls": 4,
+        "input_tokens": 1648,
+        "output_tokens": 84,
+        "cost_usd": 0.006204
+      }
+    },
+    "history": [
+      {
+        "question": "How many active projects does Acme Corp have?",
+        "answer": "Based on the database query, Acme Corp currently has **1 active project**. (SQL Agent)"
+      },
+      {
+        "question": "What about their total contract value?",
+        "answer": "Based on the SQL Agent's results, Acme Corp's total contract value is **$250,000.00**."
+      }
+    ]
+  }
+}

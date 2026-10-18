@@ -1,0 +1,53 @@
+{
+  "request": {
+    "question": "Which client has the highest contract value?"
+  },
+  "response": {
+    "answer": "Based on the database query, **Beta Financial** has the highest contract value at **$480,000** (SQL Agent).",
+    "route": "sql",
+    "sql_validation": "PASSED",
+    "sql_review": "ROUTINE",
+    "sql_executed": true,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {
+        "classification": {
+          "calls": 1,
+          "input_tokens": 614,
+          "output_tokens": 9,
+          "cost_usd": 0.001977
+        },
+        "sql_generation": {
+          "calls": 1,
+          "input_tokens": 509,
+          "output_tokens": 24,
+          "cost_usd": 0.001887
+        },
+        "sql_interpretation": {
+          "calls": 1,
+          "input_tokens": 200,
+          "output_tokens": 26,
+          "cost_usd": 0.00099
+        },
+        "synthesis": {
+          "calls": 1,
+          "input_tokens": 235,
+          "output_tokens": 29,
+          "cost_usd": 0.00114
+        }
+      },
+      "total": {
+        "calls": 4,
+        "input_tokens": 1558,
+        "output_tokens": 88,
+        "cost_usd": 0.005994
+      }
+    },
+    "history": [
+      {
+        "question": "Which client has the highest contract value?",
+        "answer": "Based on the database query, **Beta Financial** has the highest contract value at **$480,000** (SQL Agent)."
+      }
+    ]
+  }
+}

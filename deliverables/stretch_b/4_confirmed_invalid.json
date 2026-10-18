@@ -1,0 +1,33 @@
+{
+  "request": {
+    "question": "Show me everything in the invoices table.",
+    "confirm": {
+      "sql": "SELECT * FROM invoices; DROP TABLE invoices",
+      "token": "1792366500.f15bf4714a56f80c8de15ad1acd93836d8202c32fbcf4bdc5bd731bbdfc377ea"
+    }
+  },
+  "response": {
+    "answer": "I was unable to answer this question. Query blocked or failed: Blocked: 'DROP' is not permitted.",
+    "route": "sql",
+    "sql_validation": "BLOCKED",
+    "sql_review": "CONFIRMED",
+    "sql_executed": false,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {},
+      "total": {
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0
+      }
+    },
+    "history": [
+      {
+        "question": "Show me everything in the invoices table.",
+        "answer": "I was unable to answer this question. Query blocked or failed: Blocked: 'DROP' is not permitted."
+      }
+    ]
+  },
+  "db_connections": 0
+}

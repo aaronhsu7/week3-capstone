@@ -95,7 +95,7 @@ def test_blocked_query_never_connects() -> bool:
     return ok
 
 
-RUNTIME_FILES = ["agents/sql_agent.py", "agents/retrieval_agent.py", "orchestrator.py",
+RUNTIME_FILES = ["agents/sql_agent.py", "agents/sql_review.py", "memory.py", "agents/retrieval_agent.py", "orchestrator.py",
                  "tool_registry.py", "tokenomics_logger.py", "lambda_handler.py", "bedrock_client.py"]
 
 

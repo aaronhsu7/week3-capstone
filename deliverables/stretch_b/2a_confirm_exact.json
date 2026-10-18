@@ -1,0 +1,46 @@
+{
+  "request": {
+    "question": "Show me everything in the invoices table.",
+    "confirm": {
+      "sql": "SELECT * FROM invoices",
+      "token": "1792366491.d398b6a30658091cb219e3bc777eb574f5866c51562eda361b2c7566c7574af1"
+    }
+  },
+  "response": {
+    "answer": "Here are all 9 records from the invoices table (SQL Agent):\n\n- **Invoice 1** \u2013 Project 1, $60,000, Paid, due 2025-05-31, paid 2025-05-28\n- **Invoice 2** \u2013 Project 1, $60,000, Paid, due 2025-10-31, paid 2025-10-24\n- **Invoice 3** \u2013 Project 2, $30,000, Pending, due 2026-10-31, unpaid\n- **Invoice 4** \u2013 Project 3, $85,000, Paid, due 2025-08-29, paid 2025-08-27\n- **Invoice 5** \u2013 Project 3, $85,000, Overdue, due 2026-08-31, unpaid\n- **Invoice 6** \u2013 Project 4, $90,000, Paid, due 2025-12-15, paid 2025-12-12\n- **Invoice 7** \u2013 Project 4, $90,000, Paid, due 2026-03-31, paid 2026-04-02\n- **Invoice 8** \u2013 Project 5, $40,000, Overdue, due 2026-01-30, unpaid\n- **Invoice 9** \u2013 Project 6, $50,000, Pending, due 2026-11-15, unpaid\n\nIn summary (SQL Agent): 9 invoices spanning 6 projects, with 5 paid, 2 overdue, and 2 pending, totaling $590,000 in invoice value.",
+    "route": "sql",
+    "sql_validation": "PASSED",
+    "sql_review": "CONFIRMED",
+    "sql_executed": true,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {
+        "sql_interpretation": {
+          "calls": 1,
+          "input_tokens": 538,
+          "output_tokens": 400,
+          "cost_usd": 0.007614
+        },
+        "synthesis": {
+          "calls": 1,
+          "input_tokens": 586,
+          "output_tokens": 377,
+          "cost_usd": 0.007413
+        }
+      },
+      "total": {
+        "calls": 2,
+        "input_tokens": 1124,
+        "output_tokens": 777,
+        "cost_usd": 0.015027
+      }
+    },
+    "history": [
+      {
+        "question": "Show me everything in the invoices table.",
+        "answer": "Here are all 9 records from the invoices table (SQL Agent):\n\n- **Invoice 1** \u2013 Project 1, $60,000, Paid, due 2025-05-31, paid 2025-05-28\n- **Invoice 2** \u2013 Project 1, $60,000, Paid, due 2025-10-31, paid 2025-10-24\n- **Invoice 3** \u2013 Project 2, $30,000, Pending, due 2026-10-31, unpaid\n- **Invoice 4** \u2013 Project 3, $85,000, Paid, due 2025-08-29, paid 2025-08-27\n- **Invoice 5** \u2013 Project 3, $85,000, Overdue, due 2026-08-31, unpaid\n- **Invoice 6** \u2013 Project 4, $90,000, Paid, due 2025-12-15, paid 2025-12-12\n- **Invoice 7** \u2013 Project 4, $90,000, Paid, due 2026-03-31, paid 2026-04-02\n- **Invoice 8** \u2013 Project 5, $40,000, Overdue, due 2026-01-30, unpaid\n- **Invoice 9** \u2013 Project 6, $50,000, Pending, due 2026-11-15, unpaid\n\nIn summary (SQL Agent): 9 invoices spanning 6 projects, with 5 paid, 2 overdue, and 2 pending, totaling $590,000 in invoice value."
+      }
+    ]
+  },
+  "db_connections": 1
+}

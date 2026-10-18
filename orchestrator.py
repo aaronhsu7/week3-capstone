@@ -12,6 +12,7 @@ from langgraph.graph import StateGraph, END
 from typing import TypedDict, Optional
 from bedrock_client import invoke_claude
 from tool_registry import ORCHESTRATOR_PROMPTS, get_tool
+from memory import format_history
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -25,6 +26,12 @@ class OrchestratorState(TypedDict):
     retrieval_result: Optional[dict]
     final_answer: Optional[str]
     token_usage: Optional[dict]
+    # Stretch Goal B: {"sql": ..., "token": ...} confirming a query that an
+    # earlier request flagged. None for a normal question.
+    confirmation: Optional[dict]
+    # Stretch Goal A: prior {question, answer} turns, supplied by the caller
+    # and replayed (capped -- see memory.py) into the router and SQL generation.
+    history: Optional[list]
 
 
 # Fallback only: used if the Claude router call fails or returns something
@@ -56,10 +63,16 @@ def keyword_route(question: str) -> str:
 
 def route_question(state: OrchestratorState) -> dict:
     """Classification node: asks Claude which tool(s) the question needs."""
+    if state.get("confirmation"):
+        # Confirming a flagged query is a SQL action by definition. No Claude
+        # call, so routing can't drift between the flag and the confirmation.
+        return {"route": "sql"}
+
     usage = {}
     try:
         result = invoke_claude(
-            f"Question: {state['question']}", max_tokens=50, system=ORCHESTRATOR_PROMPTS["router"],
+            f"{format_history(state.get('history'))}Question: {state['question']}",
+            max_tokens=50, system=ORCHESTRATOR_PROMPTS["router"],
             component="classification",
         )
         usage = {"classification": {"input": result["input_tokens"], "output": result["output_tokens"]}}
@@ -82,7 +95,8 @@ def select_tools(state: OrchestratorState) -> list[str]:
 
 def call_sql_agent(state: OrchestratorState) -> dict:
     """SQL tool node: only reached when route is "sql" or "both"."""
-    return {"sql_result": get_tool("sql_agent")(state["question"])}
+    return {"sql_result": get_tool("sql_agent")(state["question"], state.get("confirmation"),
+                                                 state.get("history"))}
 
 
 def call_retrieval_agent(state: OrchestratorState) -> dict:
@@ -103,6 +117,13 @@ def synthesise(state: OrchestratorState) -> dict:
         token_usage.update(r.get("metadata", {}).get("token_usage", {}))
         status = "OK" if r["success"] else "FAILED / BLOCKED / NOT FOUND"
         sections.append(f"{label} Result [{status}]:\n{r['answer']}\nSources: {r['sources']}")
+
+    sql = state.get("sql_result") or {}
+    if sql.get("metadata", {}).get("needs_confirmation") and not (state.get("retrieval_result") or {}).get("success"):
+        # Paused for review and nothing else to report: hand the SQL and the
+        # reason straight back without a synthesis call.
+        return {"final_answer": f"{sql['answer']}\n\nSQL awaiting confirmation:\n{sql['sources'][0]}",
+                "token_usage": token_usage}
 
     if not any(state.get(k) and state[k]["success"] for k in ["sql_result", "retrieval_result"]):
         # Nothing usable came back -- decline without spending a synthesis

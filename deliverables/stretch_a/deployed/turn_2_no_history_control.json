@@ -1,0 +1,41 @@
+{
+  "request": {
+    "question": "What about their total contract value?"
+  },
+  "response": {
+    "answer": "I was unable to answer this question. Query blocked or failed: Blocked: only SELECT queries are permitted.",
+    "route": "sql",
+    "sql_validation": "BLOCKED",
+    "sql_review": "ROUTINE",
+    "sql_executed": false,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {
+        "classification": {
+          "calls": 1,
+          "input_tokens": 613,
+          "output_tokens": 50,
+          "cost_usd": 0.002589
+        },
+        "sql_generation": {
+          "calls": 1,
+          "input_tokens": 508,
+          "output_tokens": 47,
+          "cost_usd": 0.002229
+        }
+      },
+      "total": {
+        "calls": 2,
+        "input_tokens": 1121,
+        "output_tokens": 97,
+        "cost_usd": 0.004818
+      }
+    },
+    "history": [
+      {
+        "question": "What about their total contract value?",
+        "answer": "I was unable to answer this question. Query blocked or failed: Blocked: only SELECT queries are permitted."
+      }
+    ]
+  }
+}

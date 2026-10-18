@@ -18,6 +18,8 @@ import psycopg2
 from dotenv import load_dotenv
 from bedrock_client import invoke_claude
 from tool_registry import get_system_prompt
+from agents.sql_review import review_sql, issue_token, verify_token
+from memory import format_history
 load_dotenv()
 
 # System prompts (including the schema context) live in tool_registry.py.
@@ -80,9 +82,9 @@ def validate_sql(query: str) -> dict:
     return {"valid": True, "check": None, "reason": "OK"}
 
 
-def generate_sql(question: str) -> tuple[str, dict]:
+def generate_sql(question: str, history: list[dict] | None = None) -> tuple[str, dict]:
     result = invoke_claude(
-        f"Question: {question}",
+        f"{format_history(history)}Question: {question}",
         max_tokens=512,
         system=get_system_prompt("sql_agent", "sql_generation"),
         component="sql_generation",
@@ -104,7 +106,8 @@ def execute_query_safely(sql: str) -> dict:
     """
     validation = validate_sql(sql)
     if not validation["valid"]:
-        return {"success": False, "error": validation["reason"], "validation": "BLOCKED", "sql": sql}
+        return {"success": False, "error": validation["reason"], "validation": "BLOCKED",
+                "executed": False, "sql": sql}
 
     conn = None
     try:
@@ -119,20 +122,59 @@ def execute_query_safely(sql: str) -> dict:
         cur.execute(sql)
         rows = cur.fetchall()
         cols = [d[0] for d in cur.description]
-        return {"success": True, "columns": cols, "rows": rows, "validation": "PASSED", "sql": sql}
+        return {"success": True, "columns": cols, "rows": rows, "validation": "PASSED",
+                "executed": True, "sql": sql}
     except Exception as e:
-        return {"success": False, "error": str(e), "validation": "EXECUTION_ERROR", "sql": sql}
+        return {"success": False, "error": str(e), "validation": "EXECUTION_ERROR",
+                "executed": False, "sql": sql}
     finally:
         if conn is not None:
             conn.close()
 
 
-def validated_sql_agent(question: str) -> dict:
+def validated_sql_agent(question: str, confirmation: dict | None = None,
+                        history: list[dict] | None = None) -> dict:
+    """
+    New question:  generate -> validate -> review -> execute (or pause)
+    Confirmation:  verify token -> execute the confirmed SQL (validator
+                   runs again inside execute_query_safely; review is skipped
+                   because a person just approved this exact query)
+    """
     # token_usage is keyed per Claude call, so tokenomics can attribute cost
     # to each component -- including generation on a query that then gets
     # blocked, since that call was still made and billed.
-    sql, generation_usage = generate_sql(question)
-    token_usage = {"sql_generation": generation_usage}
+    token_usage = {}
+
+    if confirmation:
+        sql = confirmation.get("sql", "")
+        ok, reason = verify_token(question, sql, confirmation.get("token", ""))
+        if not ok:
+            # Rejected before any validation or execution: nothing runs.
+            return {"answer": f"Confirmation rejected: {reason}", "sql": sql,
+                    "validation": "NOT_RUN", "validation_reason": reason,
+                    "review": "CONFIRMATION_REJECTED", "executed": False, "token_usage": token_usage}
+        review = "CONFIRMED"
+    else:
+        # History resolves "their" etc. On a confirmation it isn't needed: the
+        # SQL is fixed, and already reflects whatever context produced it.
+        sql, generation_usage = generate_sql(question, history)
+        token_usage["sql_generation"] = generation_usage
+
+        validation = validate_sql(sql)
+        if validation["valid"]:
+            reasons = review_sql(sql)
+            if reasons:
+                return {
+                    "answer": ("This query passed validation but needs your confirmation before it "
+                               "runs: " + " ".join(reasons)),
+                    "sql": sql, "validation": "PASSED", "validation_reason": "OK",
+                    "review": "NEEDS_CONFIRMATION", "executed": False,
+                    "needs_confirmation": True, "confirmation_reasons": reasons,
+                    "confirmation_token": issue_token(question, sql),
+                    "token_usage": token_usage,
+                }
+        review = "ROUTINE"
+
     result = execute_query_safely(sql)
 
     if not result["success"]:
@@ -141,6 +183,8 @@ def validated_sql_agent(question: str) -> dict:
             "sql": sql,
             "validation": result["validation"],
             "validation_reason": result["error"],
+            "review": review,
+            "executed": result["executed"],
             "token_usage": token_usage,
         }
 
@@ -161,38 +205,49 @@ def validated_sql_agent(question: str) -> dict:
         "sql": sql,
         "validation": result["validation"],
         "validation_reason": "OK",
+        "review": review,
+        "executed": True,
         "row_count": len(result["rows"]),
         "token_usage": token_usage,
     }
 
 
-def run_sql_agent(question: str) -> dict:
+def run_sql_agent(question: str, confirmation: dict | None = None,
+                  history: list[dict] | None = None) -> dict:
     """
     Standardized tool interface: {success, answer, sources, metadata}.
-    sources holds the SQL that was run (or blocked). Never raises -- any
-    failure comes back as success=False in the same shape, so the
+    sources holds the SQL that was run (or blocked, or paused). Never raises
+    -- any failure comes back as success=False in the same shape, so the
     orchestrator can decline gracefully instead of crashing.
+
+    confirmation: {"sql": ..., "token": ...} from a previous
+    needs_confirmation response, to run that exact flagged query.
+    history: prior {question, answer} turns, to resolve follow-ups.
     """
     try:
-        result = validated_sql_agent(question)
+        result = validated_sql_agent(question, confirmation, history)
     except Exception as e:
         return {
             "success": False,
             "answer": f"SQL agent error: {type(e).__name__}: {e}",
             "sources": [],
-            "metadata": {"validation": "AGENT_ERROR", "token_usage": {}},
+            "metadata": {"validation": "AGENT_ERROR", "executed": False, "token_usage": {}},
         }
 
     metadata = {
         "validation": result["validation"],
         "validation_reason": result["validation_reason"],
+        "review": result["review"],
+        "executed": result["executed"],
         "token_usage": result["token_usage"],
     }
-    if "row_count" in result:
-        metadata["row_count"] = result["row_count"]
+    for key in ("row_count", "needs_confirmation", "confirmation_reasons", "confirmation_token"):
+        if key in result:
+            metadata[key] = result[key]
 
     return {
-        "success": result["validation"] == "PASSED",
+        # A paused query passed validation but produced no answer yet.
+        "success": result["validation"] == "PASSED" and result["executed"],
         "answer": result["answer"],
         "sources": [result["sql"]],
         "metadata": metadata,

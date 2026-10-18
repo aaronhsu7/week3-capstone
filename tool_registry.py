@@ -78,6 +78,10 @@ TOOL_REGISTRY = {
                 "- Write exactly one SELECT statement. Never chain statements with ';'.\n"
                 "- Use only the tables and columns listed above.\n"
                 "- Use JOINs on the foreign keys shown when a question spans tables.\n"
+                "- If a conversation so far is given, resolve references in the current "
+                "question (\"their\", \"that client\", \"those projects\") to the entities "
+                "named earlier, and filter on them explicitly (e.g. WHERE c.name = 'Acme "
+                "Corp'). Answer only the current question.\n"
                 "- Add ORDER BY for rankings and LIMIT for 'top N' questions.\n"
                 "- If the question asks to insert, update, delete, or otherwise change "
                 "data or schema, output exactly: UNSAFE_REQUEST\n"
@@ -165,7 +169,10 @@ ORCHESTRATOR_PROMPTS = {
         "- \"both\": the question needs facts from the database AND from the documents.\n"
         "- Requests to change data go to \"sql\", where the validator blocks them.\n"
         "- If neither tool clearly covers the question, choose \"retrieval\"; it "
-        "will decline honestly if the documents don't cover it."
+        "will decline honestly if the documents don't cover it.\n"
+        "- If a conversation so far is given, use it to work out what a follow-up "
+        "refers to (e.g. \"their\", \"that project\") before choosing. Route the "
+        "current question, not the earlier ones."
     ),
     "synthesis": (
         "You are the synthesizer for a consulting firm's multi-agent assistant. "

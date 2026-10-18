@@ -1,0 +1,52 @@
+{
+  "request": {
+    "question": "List all of their invoices together with the project and client details.",
+    "history": [
+      {
+        "question": "Which client has the highest contract value?",
+        "answer": "Based on the database results, the client with the highest contract value is **Beta Financial**, with a contract value of **$480,000.00** (SQL Agent). They operate in the Finance industry, are located in the East region, and their contract was created on March 1, 2025 (SQL Agent)."
+      }
+    ]
+  },
+  "response": {
+    "answer": "This query passed validation but needs your confirmation before it runs: Joins 3 tables (more than 2).\n\nSQL awaiting confirmation:\nSELECT i.id AS invoice_id, i.amount, i.status AS invoice_status, i.due_date, i.paid_date,\n       p.id AS project_id, p.name AS project_name, p.status AS project_status, p.start_date, p.end_date, p.budget,\n       c.id AS client_id, c.name AS client_name, c.industry, c.region, c.contract_value\nFROM invoices i\nJOIN projects p ON i.project_id = p.id\nJOIN clients c ON p.client_id = c.id\nWHERE c.name = 'Beta Financial'\nORDER BY i.due_date",
+    "route": "sql",
+    "sql_validation": "PASSED",
+    "sql_review": "NEEDS_CONFIRMATION",
+    "sql_executed": false,
+    "needs_confirmation": true,
+    "token_usage": {
+      "by_component": {
+        "classification": {
+          "calls": 1,
+          "input_tokens": 713,
+          "output_tokens": 9,
+          "cost_usd": 0.002274
+        },
+        "sql_generation": {
+          "calls": 1,
+          "input_tokens": 608,
+          "output_tokens": 161,
+          "cost_usd": 0.004239
+        }
+      },
+      "total": {
+        "calls": 2,
+        "input_tokens": 1321,
+        "output_tokens": 170,
+        "cost_usd": 0.006513
+      }
+    },
+    "pending_sql": "SELECT i.id AS invoice_id, i.amount, i.status AS invoice_status, i.due_date, i.paid_date,\n       p.id AS project_id, p.name AS project_name, p.status AS project_status, p.start_date, p.end_date, p.budget,\n       c.id AS client_id, c.name AS client_name, c.industry, c.region, c.contract_value\nFROM invoices i\nJOIN projects p ON i.project_id = p.id\nJOIN clients c ON p.client_id = c.id\nWHERE c.name = 'Beta Financial'\nORDER BY i.due_date",
+    "confirmation_reasons": [
+      "Joins 3 tables (more than 2)."
+    ],
+    "confirmation_token": "1792366288.70c4798216a90ec4c3ba451c051a0880e2f6e1560c3c00cd426ad2e993b7ca03",
+    "history": [
+      {
+        "question": "Which client has the highest contract value?",
+        "answer": "Based on the database results, the client with the highest contract value is **Beta Financial**, with a contract value of **$480,000.00** (SQL Agent). They operate in the Finance industry, are located in the East region, and their contract was created on March 1, 2025 (SQL Agent)."
+      }
+    ]
+  }
+}

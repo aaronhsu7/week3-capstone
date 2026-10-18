@@ -1,0 +1,55 @@
+{
+  "request": {
+    "question": "List all of their invoices together with the project and client details.",
+    "history": [
+      {
+        "question": "Which client has the highest contract value?",
+        "answer": "Based on the database query, **Beta Financial** has the highest contract value at **$480,000** (SQL Agent)."
+      }
+    ],
+    "confirm": {
+      "sql": "SELECT i.id AS invoice_id, i.amount, i.status AS invoice_status, i.due_date, i.paid_date,\n       p.id AS project_id, p.name AS project_name, p.status AS project_status, p.start_date, p.end_date, p.budget,\n       c.id AS client_id, c.name AS client_name, c.industry, c.region, c.contract_value\nFROM invoices i\nJOIN projects p ON i.project_id = p.id\nJOIN clients c ON p.client_id = c.id\nWHERE c.name = 'Beta Financial'\nORDER BY i.due_date",
+      "token": "1792366118.915bb4a637a89d5d2e4bd253b25c79268418d7ce3b250db8cf457b0117dd9578"
+    }
+  },
+  "response": {
+    "answer": "Based on the SQL Agent results, here are all invoices for Beta Financial along with the associated project and client details.\n\nBeta Financial is a Finance-sector client in the East region with a contract value of $480,000 (SQL Agent). Both of their invoices are tied to the same project \u2014 **Risk Model Modernisation** \u2014 which is currently Active, started on 2025-04-14, with a budget of $260,000 (SQL Agent).\n\nTheir two invoices are:\n\n- **Invoice #4** \u2014 $85,000, status **Paid**, due 2025-08-29, paid on 2025-08-27 (SQL Agent)\n- **Invoice #5** \u2014 $85,000, status **Overdue**, due 2026-08-31, not yet paid (SQL Agent)\n\nTogether these invoices total $170,000 against the project budget of $260,000. Invoice #5 remains outstanding and is past its due date.",
+    "route": "sql",
+    "sql_validation": "PASSED",
+    "sql_review": "CONFIRMED",
+    "sql_executed": true,
+    "needs_confirmation": false,
+    "token_usage": {
+      "by_component": {
+        "sql_interpretation": {
+          "calls": 1,
+          "input_tokens": 597,
+          "output_tokens": 129,
+          "cost_usd": 0.003726
+        },
+        "synthesis": {
+          "calls": 1,
+          "input_tokens": 490,
+          "output_tokens": 219,
+          "cost_usd": 0.004755
+        }
+      },
+      "total": {
+        "calls": 2,
+        "input_tokens": 1087,
+        "output_tokens": 348,
+        "cost_usd": 0.008481
+      }
+    },
+    "history": [
+      {
+        "question": "Which client has the highest contract value?",
+        "answer": "Based on the database query, **Beta Financial** has the highest contract value at **$480,000** (SQL Agent)."
+      },
+      {
+        "question": "List all of their invoices together with the project and client details.",
+        "answer": "Based on the SQL Agent results, here are all invoices for Beta Financial along with the associated project and client details.\n\nBeta Financial is a Finance-sector client in the East region with a contract value of $480,000 (SQL Agent). Both of their invoices are tied to the same project \u2014 **Risk Model Modernisation** \u2014 which is currently Active, started on 2025-04-14, with a budget of $260,000 (SQL Agent).\n\nTheir two invoices are:\n\n- **Invoice #4** \u2014 $85,000, status **Paid**, due 2025-08-29, paid on 2025-08-27 (SQL Agent)\n- **Invoice #5** \u2014 $85,000, status **Overdue**, due 2026-08-31, not yet paid (SQL Agent)\n\nTogether these invoices total $170,000 against the project budget of $260,000. Invoice #5 remains outstanding and is past its due date."
+      }
+    ]
+  }
+}
